@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  	<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Task2</title>
+  	</head>
+  	<body>
+		<input type="file" id="dataFile" onchange='readOrFilter("read")'>
+		<div class="container-fluid mt-5">
+			<div class="row" id="selects">
+
+			</div>
+		</div>
+		<div class="container-fluid" id="selectionArea">
+
+		</div>
+		<script>
+			function readOrFilter(param) {
+				let file = document.getElementById('dataFile').files[0];
+				let reader = new FileReader();
+				reader.onload = function(event) {
+					let content = event.target.result;
+					if (param == "read") {
+						createSelect(content);
+						addContent(content); // adding content to select tags
+						printContent(content); // printing content to "table"
+					}
+					else if (param == "filter") {
+						filter(content); // filtering the content accordingly
+					}
+					console.log(content); // de scos la review
+				};
+				reader.readAsText(file);
+			}
+			function createSelect(content) {
+				let splitContent = content.split("\n")[0].split(",");
+				for (let i = 0; i < splitContent.length; ++i) {
+					$("#selects").append(`<select id="${i}" onchange='readOrFilter("filter")'></select>`);
+					$(`#${i}`).append(`<option value="all">Toate</option>`);
+				}
+			}
+			function addContent(content) {
+				let splitContent = content.split("\n");
+				for (let i = 0; i < splitContent.length - 1; ++i) {
+					let splitCont = splitContent[i].split(",");
+					for (let j = 0; j < splitCont.length; ++j) {
+						var duplicated = 0;
+						$(`#${j} option`).each(function(){
+							if ($(this).val() == splitCont[j]) {
+								duplicated = 1;
+							}
+						});
+						if (!duplicated) {
+							$(`#${j}`).append(`<option value="${splitCont[j]}">${splitCont[j]}</option>`);
+						}
+					}
+				}
+			}
+
+			function printContent(content) {
+				let splitContent = content.split("\n");
+				for (let i = 0; i < splitContent.length; ++i) {
+					document.getElementById("selectionArea").innerHTML += splitContent[i] + "<br/>";
+				}
+			}
+
+			function filter(content) {
+				$("#selectionArea").empty();
+				splitContent = content.split("\n");
+				for (let i = 0; i < splitContent.length - 1; ++i) {
+					let splitCont = splitContent[i].split(",");
+					let filterIsOk = 1;
+					for (let j = 0; j < splitCont.length; ++j) {
+						if (!($(`#${j}`).val() == "all" || $(`#${j}`).val() == splitCont[j])) {
+							filterIsOk = 0;
+							break;
+						}
+					}
+					if (filterIsOk) {
+						document.getElementById("selectionArea").innerHTML += splitContent[i] + "<br/>";
+					}
+				}
+			}
+		</script>
+
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  	</body>
+</html>
